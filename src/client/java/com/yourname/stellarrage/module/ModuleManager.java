@@ -31,4 +31,12 @@ public class ModuleManager {
             }
         }
     }
+
+    public static void onKey() {
+        for (Module module : modules) {
+            if (module.getKeybind() != null && module.getKeybind().wasPressed()) {
+                module.toggle();
+            }
+        }
+    }
 }
