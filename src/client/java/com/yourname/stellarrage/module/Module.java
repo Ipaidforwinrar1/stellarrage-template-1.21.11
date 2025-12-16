@@ -1,106 +1,67 @@
 package com.yourname.stellarrage.module;
 
-import net.minecraft.client.option.KeyBinding;
+import org.lwjgl.glfw.GLFW;
+import com.yourname.stellarrage.event.Event;
+import com.yourname.stellarrage.event.EventListener;
 
 /**
- * Abstract base class for modules in the Stellar Rage system.
- * Modules can be enabled or disabled and provide lifecycle hooks for activation and deactivation.
+ * Base class for all modules.
+ * Modules react to events via the EventBus.
  */
-public abstract class Module {
-    /** The name of the module. */
-    private final String name;
-    /** The category this module belongs to. */
-    private final Category category;
-    protected KeyBinding keybind;
-    /** Whether the module is currently enabled. */
-    private boolean enabled;
+public abstract class Module implements EventListener {
 
-    /**
-     * Constructs a new Module with the given name and category.
-     * The module starts in a disabled state.
-     *
-     * @param name     the name of the module
-     * @param category the category of the module
-     */
+    protected final String name;
+    protected final Category category;
+    private boolean enabled;
+    private int key = GLFW.GLFW_KEY_UNKNOWN;
+
     public Module(String name, Category category) {
         this.name = name;
         this.category = category;
-        this.enabled = false;
     }
 
-    /**
-     * Gets the name of the module.
-     *
-     * @return the module name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Gets the category of the module.
-     *
-     * @return the module category
-     */
+    public int getKey() {
+        return key;
+    }
+
     public Category getCategory() {
         return category;
     }
 
-    public KeyBinding getKeybind() {
-        return keybind;
-    }
-
-    /**
-     * Checks if the module is enabled.
-     *
-     * @return true if enabled, false otherwise
-     */
     public boolean isEnabled() {
         return enabled;
     }
 
-    /**
-     * Toggles the enabled state of the module.
-     * Calls onEnable() if enabling, or onDisable() if disabling.
-     */
     public void toggle() {
         enabled = !enabled;
-        if (enabled) {
-            onEnable();
-        } else {
-            onDisable();
-        }
+        if (enabled) onEnable();
+         else onDisable();
+    }
+
+    public void setKey(int key) {
+        this.key = key;
     }
 
     /**
-     * Sets the enabled state of the module.
-     * If the state changes, it toggles the module accordingly.
-     *
-     * @param value the desired enabled state
-     */
-    public void setEnabled(boolean value) {
-        if (enabled != value) {
-            toggle();
-        }
-    }
-
-    // Lifecycle hooks
-
-    /**
-     * Called when the module is enabled.
-     * Subclasses can override to perform initialization.
+     * Called once when the module is enabled.
      */
     protected void onEnable() {}
 
     /**
-     * Called when the module is disabled.
-     * Subclasses can override to perform cleanup.
+     * Called once when the module is disabled.
      */
     protected void onDisable() {}
 
     /**
-     * Called every client tick when the module is enabled.
-     * Subclasses can override to implement per-tick logic.
+     * Called for every event posted to the EventBus
+     * while this module is registered.
      */
-    public void onTick() {}
+    @Override
+    public void onEvent(Event event) {
+        // overridden by subclasses
+    }
 }

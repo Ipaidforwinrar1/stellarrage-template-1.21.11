@@ -1,42 +1,44 @@
 package com.yourname.stellarrage.module;
 
+import com.yourname.stellarrage.event.Event;
+import com.yourname.stellarrage.event.EventBus;
+import com.yourname.stellarrage.module.movement.AutoSprint;
+
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Manages all modules and forwards events to them.
+ */
 public class ModuleManager {
 
-    private static final List<Module> modules = new ArrayList<>();
+    private final List<Module> modules = new ArrayList<>();
+    private final EventBus eventBus;
 
-    public static void register(Module module) {
-        modules.add(module);
+    public ModuleManager(EventBus eventBus) {
+        this.eventBus = eventBus;
     }
 
-    public static List<Module> getModules() {
+    /**
+     * Register all modules here.
+     */
+    public void init() {
+        add(new AutoSprint());
+    }
+
+    public void add(Module module) {
+        modules.add(module);
+        eventBus.register(module);
+    }
+
+    public List<Module> getModules() {
         return modules;
     }
 
-    public static Module getByName(String name) {
-        for (Module module : modules) {
-            if (module.getName().equalsIgnoreCase(name)) {
-                return module;
-            }
-        }
-        return null;
-    }
-
-    public static void onTick() {
-        for (Module module : modules) {
-            if (module.isEnabled()) {
-                module.onTick();
-            }
-        }
-    }
-
-    public static void onKey() {
-        for (Module module : modules) {
-            if (module.getKeybind() != null && module.getKeybind().wasPressed()) {
-                module.toggle();
-            }
-        }
+    /**
+     * Forward events into the EventBus.
+     */
+    public void post(Event event) {
+        eventBus.post(event);
     }
 }
