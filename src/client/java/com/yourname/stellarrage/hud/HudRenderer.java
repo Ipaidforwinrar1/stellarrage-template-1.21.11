@@ -21,7 +21,7 @@ public class HudRenderer {
         int y = 5;
         int lineHeight = 10;
 
-        for (Module module : StellarRageClient.MODULE_MANAGER.getModules()) {
+        for (Module module : StellarRageClient.CONTEXT.moduleManager.getModules()) {
             if (!module.isEnabled()) continue;
 
             context.drawText(

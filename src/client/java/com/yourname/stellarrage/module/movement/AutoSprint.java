@@ -1,12 +1,13 @@
 package com.yourname.stellarrage.module.movement;
 
-import com.yourname.stellarrage.event.Event;
+import com.yourname.stellarrage.StellarRageClient;
+import com.yourname.stellarrage.event.EventListener;
 import com.yourname.stellarrage.event.impl.TickEvent;
 import com.yourname.stellarrage.module.Category;
 import com.yourname.stellarrage.module.Module;
 import org.lwjgl.glfw.GLFW;
 
-public class AutoSprint extends Module {
+public final class AutoSprint extends Module implements EventListener<TickEvent> {
 
     public AutoSprint() {
         super("AutoSprint", Category.MOVEMENT);
@@ -14,30 +15,30 @@ public class AutoSprint extends Module {
     }
 
     @Override
-    public void onEvent(Event event) {
-        System.out.println("AutoSprint tick event received");
-        if (!isEnabled()) return;
-        if (!(event instanceof TickEvent tick)) return;
-        // Implement auto-sprint logic here using tick.mc
-        var mc = tick.mc;
-        if (mc.player == null) return;
-        // Example logic: Automatically start sprinting when moving forward
-        if (mc.options.forwardKey.isPressed()
-            && !mc.player.isSneaking()
-            && !mc.player.isUsingItem()
-            && mc.player.getHungerManager().getFoodLevel() > 6) {
-
-            mc.player.setSprinting(true);
-        }
-    }
-
-    @Override
     protected void onEnable() {
+        StellarRageClient.CONTEXT.eventBus.register(TickEvent.class, this);
         System.out.println("AutoSprint enabled");
     }
 
     @Override
     protected void onDisable() {
+        StellarRageClient.CONTEXT.eventBus.unregister(TickEvent.class, this);
+
+        if (mc.player != null) {
+            mc.player.setSprinting(false);
+        }
+
         System.out.println("AutoSprint disabled");
+
     }
-}
+
+    @Override
+    public void onEvent(TickEvent event) {
+        if (mc.player == null) return;
+        System.out.println(Thread.currentThread().getName());
+
+        mc.player.setSprinting(true);
+        }
+    }
+
+

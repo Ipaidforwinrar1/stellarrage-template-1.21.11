@@ -19,6 +19,5 @@ public class ExampleClientMixin {
 		if (mc.player == null) return;
 
 		StellarRageClient.EVENT_BUS.post(new TickEvent(mc));
-		System.out.println("Client tick event posted");
 	}
 }

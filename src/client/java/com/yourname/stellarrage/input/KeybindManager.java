@@ -20,7 +20,7 @@ public class KeybindManager {
         // Get the native window handle required by GLFW to query key states.
         long window = mc.getWindow().getHandle();
 
-        for (Module module : StellarRageClient.MODULE_MANAGER.getModules()) {
+        for (Module module : StellarRageClient.CONTEXT.moduleManager.getModules()) {
             int key = module.getKey();
             // Skip modules without a bound key.
             if (key == GLFW.GLFW_KEY_UNKNOWN) continue;

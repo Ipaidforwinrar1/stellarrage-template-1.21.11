@@ -1,34 +1,32 @@
 package com.yourname.stellarrage;
 
+import com.yourname.stellarrage.core.ClientContext;
 import com.yourname.stellarrage.event.EventBus;
 import com.yourname.stellarrage.event.impl.TickEvent;
-import com.yourname.stellarrage.input.KeybindManager;
-import com.yourname.stellarrage.module.ModuleManager;
+import com.yourname.stellarrage.hud.HudRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import com.yourname.stellarrage.hud.HudRenderer;
 
-public class StellarRageClient implements ClientModInitializer {
+public final class StellarRageClient implements ClientModInitializer {
 
-	public static  EventBus EVENT_BUS;
-	public static ModuleManager MODULE_MANAGER;
-	public static KeybindManager KEYBIND_MANAGER;
+	public static ClientContext CONTEXT;
+	public static EventBus EVENT_BUS;
 
 	@Override
 	public void onInitializeClient() {
-
 		EVENT_BUS = new EventBus();
-		MODULE_MANAGER = new ModuleManager(EVENT_BUS);
-		MODULE_MANAGER.init();
-		HudRenderer.init();
+		CONTEXT = new ClientContext();
 
-		KEYBIND_MANAGER = new KeybindManager();
+		CONTEXT.moduleManager.init();
+		HudRenderer.init();
 
 		ClientTickEvents.END_CLIENT_TICK.register(mc -> {
 			if (mc.player == null || mc.world == null) return;
 
-			KEYBIND_MANAGER.tick();
-			MODULE_MANAGER.post(new TickEvent(mc));
+			CONTEXT.keybinds.tick();
+
+			// 🔥 THIS is the new correct dispatch
+			CONTEXT.eventBus.post(new TickEvent(mc));
 		});
 	}
 }

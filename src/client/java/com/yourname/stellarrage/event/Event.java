@@ -1,6 +1,7 @@
 package com.yourname.stellarrage.event;
 
 public abstract class Event {
+
     private boolean cancelled = false;
 
     public boolean isCancelled() {

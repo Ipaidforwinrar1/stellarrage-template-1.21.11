@@ -1,5 +1,6 @@
 package com.yourname.stellarrage.module;
 
+import net.minecraft.client.MinecraftClient;
 import org.lwjgl.glfw.GLFW;
 import com.yourname.stellarrage.event.Event;
 import com.yourname.stellarrage.event.EventListener;
@@ -8,14 +9,15 @@ import com.yourname.stellarrage.event.EventListener;
  * Base class for all modules.
  * Modules react to events via the EventBus.
  */
-public abstract class Module implements EventListener {
+public abstract class Module {
 
+    protected final MinecraftClient mc = MinecraftClient.getInstance();
     protected final String name;
     protected final Category category;
     private boolean enabled;
     private int key = GLFW.GLFW_KEY_UNKNOWN;
 
-    public Module(String name, Category category) {
+    protected Module(String name, Category category) {
         this.name = name;
         this.category = category;
     }
@@ -60,8 +62,4 @@ public abstract class Module implements EventListener {
      * Called for every event posted to the EventBus
      * while this module is registered.
      */
-    @Override
-    public void onEvent(Event event) {
-        // overridden by subclasses
-    }
 }
